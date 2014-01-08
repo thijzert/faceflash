@@ -83,6 +83,7 @@ func read_file( ctx *web.Context, filename string )  {
 		var mt string = mime.TypeByExtension( filepath.Ext( filename ) );
 		if mt == "" { mt = "text/plain; charset=UTF-8"; }
 		ctx.SetHeader( "Content-type", mt, true );
+		ctx.SetHeader( "Content-length", fmt.Sprintf("%d",len(bytes)), true );
 		ctx.Write( bytes );
 	}
 }
