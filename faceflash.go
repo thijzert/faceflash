@@ -97,6 +97,7 @@ func main() {
 	fm.ParseDir( ImageFolder )
 
 	s.Get( "/assets/(.*)", read_asset );
+	s.Get( "/favicon.ico", func( ctx *web.Context ) { read_asset( ctx, "images/favicon.ico" ) } )
 
 	s.Get( "/faces.json", func( ctx *web.Context ) {
 		ctx.SetHeader( "Content-type", "application/json", true );
