@@ -28,12 +28,18 @@ func ( fm FaceMap ) ParseDir( dir string ) {
 
 	for _, file := range files {
 		if file.IsDir() { continue }
-		sha := sha1sum( dir + "/" + file.Name() )
+
+		path := dir + "/" + file.Name()
+		name := file.Name()
+		ext := filepath.Ext( path )
+		if len(ext) > 0 {  name = name[0:len(name) - len(ext)]  }
+
+		sha := sha1sum( path )
 		ff, ok := fm[sha]
 		if ok {
-			ff.AppendName( file.Name() )
+			ff.AppendName( name )
 		} else {
-			fm[sha] = Face{ dir + "/" + file.Name(), []string{ file.Name() } }
+			fm[sha] = Face{ path, []string{ name } }
 		}
 	}
 }
@@ -98,6 +104,6 @@ func main() {
 		ctx.Write( js )
 	} )
 
-	s.Run( "127.0.0.1:9999" );
+	s.Run( "0.0.0.0:9999" );
 }
 
