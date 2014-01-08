@@ -59,6 +59,10 @@ func ( ff Face ) AppendName( name string ) {
 	ff.Names[n] = name
 }
 
+func ( ff Face ) ReadFile( ctx *web.Context ) {
+	read_file( ctx, ff.filename )
+}
+
 
 func sha1sum( filename string ) string {
 	s := sha1.New()
@@ -69,11 +73,8 @@ func sha1sum( filename string ) string {
 }
 
 
-var dots = regexp.MustCompile( "\\.+" )
+func read_file( ctx *web.Context, filename string )  {
 
-func read_asset( ctx *web.Context, filename string )  {
-
-	filename = "./assets/" + dots.ReplaceAllString( filename, "." )
 	bytes, err := ioutil.ReadFile( filename );
 
 	if err != nil {
@@ -84,6 +85,11 @@ func read_asset( ctx *web.Context, filename string )  {
 		ctx.SetHeader( "Content-type", mt, true );
 		ctx.Write( bytes );
 	}
+}
+
+var dots = regexp.MustCompile( "\\.+" )
+func read_asset( ctx *web.Context, filename string )  {
+	read_file( ctx, "./assets/" + dots.ReplaceAllString( filename, "." ) )
 }
 
 
@@ -103,6 +109,14 @@ func main() {
 		ctx.SetHeader( "Content-type", "application/json", true );
 		js, _ := json.Marshal( fm )
 		ctx.Write( js )
+	} )
+	s.Get( "/face/([0-9a-f]{40})", func( ctx *web.Context, hash string ) {
+		ff, ok := fm[ hash ]
+		if ok {
+			ff.ReadFile( ctx )
+		} else {
+			ctx.NotFound( "Unknown face" )
+		}
 	} )
 
 	s.Run( "0.0.0.0:9999" );
