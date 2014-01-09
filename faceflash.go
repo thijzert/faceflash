@@ -120,6 +120,8 @@ func main() {
 		}
 	} )
 
+	s.Get( "/", func( ctx *web.Context ) { read_asset( ctx, "application.html" ) } )
+
 	s.Run( "0.0.0.0:9999" );
 }
 

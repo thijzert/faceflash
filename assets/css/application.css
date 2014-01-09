@@ -1,0 +1,96 @@
+
+body
+{
+	background-color: #ddd;
+}
+
+
+#faceflash
+{
+	background-color: #fff;
+	width: 1200px;
+	position: relative;
+	margin: 50px auto 20px auto;
+	min-height: 700px;
+}
+#faceflash.loading
+{
+	background-image: url(../images/spinner-large.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#faceflash > div
+{
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	width: 1160px;
+	display: none;
+}
+
+
+
+#game #countdown > span
+{
+	font-size: 300px;
+	line-height: 300px;
+	width: 1160px;
+	text-align: center;
+	position: absolute;
+	left: 0px;
+	top: 150px;
+	color: #000000;
+	opacity: 0.8;
+	font-family: sans-serif;
+}
+
+
+#game #portrait
+{
+	border: 1px solid #bbb;
+	position: absolute;
+	left: 100px;
+	top: 50px;
+	width: 380px;
+	height: 550px;
+	line-height: 550px;
+	text-align: center;
+}
+#game #portrait img
+{
+	/*display: block;*/
+	max-height: 100%;
+	max-width: 100%;
+	margin: auto auto;
+	vertical-align: middle;
+}
+
+#game #controls
+{
+	margin-top: 50px;
+	float: right;
+	width: 600px;
+}
+#game #controls dl
+{
+	text-align: right;
+}
+#game #controls dl dt, #game #controls dl dd
+{
+	display: inline-block;
+}
+#game #controls dl dd
+{
+	width: 50px;
+}
+
+#game #controls #form input
+{
+	width: 100%;
+	box-sizing: border-box;
+	padding: 5px 10px;
+	font-size: 20px;
+}
+
+

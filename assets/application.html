@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Faceflash</title>
+
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="assets/css/application.css" />
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="assets/js/application.js"></script>
+	</head>
+	<body>
+		<div id="faceflash">
+			<div id="welcome">
+				<h1>Faceflash</h1>
+				<button type="button">Start</button>
+			</div>
+			<div id="game">
+				<div id="countdown"></div>
+				<div id="portrait"><img /></div>
+				<div id="controls">
+					<dl id="score-thusfar">
+						<dt>Remaining:</dt><dd class="score-remaining">0</dd><br />
+						<dt>Correct:</dt><dd class="score-correct">0</dd><br />
+						<dt>Incorrect:</dt><dd class="score-incorrect">0</dd>
+					</dl>
+
+					<div id="form">
+						<input type="text" placeholder="Wo is this?" />
+					</div>
+				</div>
+			</div>
+			<div id="score"></div>
+		</div>
+	</body>
+</html>
