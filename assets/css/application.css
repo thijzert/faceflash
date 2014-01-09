@@ -94,3 +94,42 @@ body
 }
 
 
+#game #flash_container > p
+{
+	margin-bottom: 10px;
+	font-size: 20px;
+	line-height: 25px;
+}
+#game #flash_container > p strong
+{
+	font-weight: bold;
+}
+#game #flash_container > p i.spacer
+{
+	padding-right: 20px;
+}
+#game #flash_container > p small
+{
+	font-size: 14px;
+}
+#game #flash_container > p tt
+{
+	font-family: Inconsolata, "Anonymous Pro", Courier, fixed;
+}
+
+#game #flash_container > p.correct
+{
+	color: green;
+}
+#game #flash_container > p.incorrect
+{
+	color: red;
+}
+#game #flash_container > p.info
+{
+	color: #8B4513;
+}
+
+
+
+

@@ -25,6 +25,21 @@ $(function()
 
 	var start_game = function()
 	{
+		var flash_container = $("#game #flash_container");
+		var flash_message = function( message, cls )
+		{
+			var P = $("<p></p>").append(message).addClass(cls);
+			flash_container.prepend(P);
+
+			setTimeout( function()
+			{
+				P.fadeOut( 4000, function()
+				{
+					P.remove();
+				});
+			}, 4000 );
+		};
+
 		var Countdown = {
 			timeout: 1000,
 			overlap:  800,
@@ -70,12 +85,22 @@ $(function()
 			{
 				next_round();
 				if ( this_round.length == 0 )
+				{
 					enter_stage( "score" );
+					return;
+				}
 			}
 
 			hash = this_round[0];
 			$("#game #portrait img").attr( "src", "face/" + hash );
 			ipt.val('').focus();
+		};
+
+		var FA = {
+			spc: $('<i class="spacer"></i>'),
+			check: $('<i class="fa fa-check"></i>'),
+			down: $('<i class="fa fa-thumbs-down"></i>'),
+			info: $('<i class="fa fa-info-circle"></i>')
 		};
 
 		var amiright = function()
@@ -92,15 +117,29 @@ $(function()
 			this_round.splice(0,1);
 			if ( rv )
 			{
-				console.log( "correct" );
-				// TODO: green checkmark
+				var msg = [
+					FA.check.clone(),
+					FA.spc.clone(),
+					$("<strong />").text(name),
+					" is correct."
+				];
+				flash_message( msg, "correct" );
+
 				next_face();
 			}
 			else
 			{
 				remaining.push( hash )
-				console.log( name + " was incorrect; i was looking for " + theface.Names[0] );
-				// TODO: red x, show actual name
+
+				var msg = [
+					FA.down.clone(),
+					FA.spc.clone(),
+					$("<small />").text(name),
+					" was incorrect; I was looking for ",
+					$("<strong />").text(theface.Names[0])
+				];
+				flash_message( msg, "incorrect" );
+
 				setTimeout( next_face, 1000 );
 				hash = null;
 			}
