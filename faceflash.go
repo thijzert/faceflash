@@ -33,6 +33,7 @@ func ( fm FaceMap ) ParseDir( dir string ) {
 	// Add any files first
 	for _, file := range files {
 		if file.IsDir() { continue }
+		if file.Size() == 0 { continue }
 
 		path := dir + "/" + file.Name()
 		name := file.Name()
