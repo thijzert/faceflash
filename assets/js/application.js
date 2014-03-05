@@ -110,9 +110,15 @@ $(function()
 			var name = ipt.val().toLowerCase().trim();
 
 			var rv = false;
-			for ( var i = 0; i < theface.Names.length; i++ )
+			var i = 0;
+			for ( ; i < theface.Names.length; i++ )
+			{
 				if ( theface.Names[i].toLowerCase().trim() === name )
+				{
 					rv = true;
+					break;
+				}
+			}
 
 			this_round.splice(0,1);
 			if ( rv )
@@ -120,21 +126,27 @@ $(function()
 				var msg = [
 					FA.check.clone(),
 					FA.spc.clone(),
-					$("<strong />").text(name),
-					" is correct."
+					$("<strong />").text(theface.Names[0]),
+					" is correct. "
 				];
-				flash_message( msg, "correct" );
+				if ( i > 0 )
+					msg.push( $("<small />").text("You answered ").append($("<strong />").text(name)) );
 
+				flash_message( msg, "correct" );
 				next_face();
 			}
 			else
 			{
 				remaining.push( hash )
 
+				var ans = "This"
+				if ( name.trim().length > 0 )
+					ans = $("<small />").text(name)
+
 				var msg = [
 					FA.down.clone(),
 					FA.spc.clone(),
-					$("<small />").text(name),
+					ans,
 					" was incorrect; I was looking for ",
 					$("<strong />").text(theface.Names[0])
 				];
