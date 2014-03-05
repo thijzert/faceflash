@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"log"
 	"io/ioutil"
 	"mime"
 	"path/filepath"
@@ -14,7 +15,7 @@ import (
 )
 
 
-type FaceMap map[string]Face
+type FaceMap map[string]*Face
 
 type Face struct {
 	filename string
@@ -24,8 +25,11 @@ type Face struct {
 
 func ( fm FaceMap ) ParseDir( dir string ) {
 	files, err := ioutil.ReadDir( dir )
-	if err != nil { return }
+	if err != nil { log.Fatal(err) }
 
+	fmt.Printf( "Descending into \"%s\"\n", dir )
+
+	// Add any files first
 	for _, file := range files {
 		if file.IsDir() { continue }
 
@@ -39,14 +43,22 @@ func ( fm FaceMap ) ParseDir( dir string ) {
 		if ok {
 			ff.AppendName( name )
 		} else {
-			fm[sha] = Face{ path, []string{ name } }
+			fm[sha] = &Face{ path, []string{ name } }
 		}
+	}
+
+	fmt.Printf( "%d images so far\n", len(fm) )
+
+	// Now recursively descend into directories
+	for _, file := range files {
+		if ! file.IsDir() { continue }
+		fm.ParseDir( dir + "/" + file.Name() )
 	}
 }
 func ( ff Face ) SetFile( file string ) {
 	ff.filename = file
 }
-func ( ff Face ) AppendName( name string ) {
+func ( ff *Face ) AppendName( name string ) {
 	n := len(ff.Names)
 	if n == cap(ff.Names) {
 		// Slice is full; must grow.
@@ -107,7 +119,7 @@ func main() {
 	s.Get( "/favicon.ico", func( ctx *web.Context ) { read_asset( ctx, "images/favicon.ico" ) } )
 
 	s.Get( "/faces.json", func( ctx *web.Context ) {
-		ctx.SetHeader( "Content-type", "application/json", true );
+		ctx.SetHeader( "Content-type", "application/json; charset=UTF-8", true );
 		js, _ := json.Marshal( fm )
 		ctx.Write( js )
 	} )
