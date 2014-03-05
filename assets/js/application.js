@@ -107,11 +107,11 @@ $(function()
 		{
 			if ( !hash )  return;
 			var theface = faces[hash];
-			var name = ipt.val().toLowerCase();
+			var name = ipt.val().toLowerCase().trim();
 
 			var rv = false;
 			for ( var i = 0; i < theface.Names.length; i++ )
-				if ( theface.Names[i].toLowerCase() === name )
+				if ( theface.Names[i].toLowerCase().trim() === name )
 					rv = true;
 
 			this_round.splice(0,1);
