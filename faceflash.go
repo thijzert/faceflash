@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"flag"
 	"log"
 	"io/ioutil"
 	"mime"
@@ -24,10 +25,10 @@ type Face struct {
 
 
 func ( fm FaceMap ) ParseDir( dir string ) {
+	// fmt.Printf( "Descending into \"%s\"\n", dir )
+
 	files, err := ioutil.ReadDir( dir )
 	if err != nil { log.Fatal(err) }
-
-	fmt.Printf( "Descending into \"%s\"\n", dir )
 
 	// Add any files first
 	for _, file := range files {
@@ -46,8 +47,6 @@ func ( fm FaceMap ) ParseDir( dir string ) {
 			fm[sha] = &Face{ path, []string{ name } }
 		}
 	}
-
-	fmt.Printf( "%d images so far\n", len(fm) )
 
 	// Now recursively descend into directories
 	for _, file := range files {
@@ -106,10 +105,18 @@ func read_asset( ctx *web.Context, filename string )  {
 }
 
 
-
-var ImageFolder = "/path/to/images"
+var ImageFolder string
+var BindIP string
+var BindPort int
 
 func main() {
+
+	flag.StringVar( &ImageFolder, "folder", "/path/to/images", "where the images are located" )
+	flag.StringVar( &BindIP, "ip", "0.0.0.0", "the IP address to bind on" )
+	flag.IntVar( &BindPort, "port", 9999, "the port to listen on" )
+	flag.Parse()
+
+
 	s := web.NewServer()
 
 	fm := make(FaceMap)
@@ -134,6 +141,6 @@ func main() {
 
 	s.Get( "/", func( ctx *web.Context ) { read_asset( ctx, "application.html" ) } )
 
-	s.Run( "0.0.0.0:9999" );
+	s.Run( fmt.Sprintf( "%s:%d", BindIP, BindPort ) )
 }
 
