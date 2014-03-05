@@ -97,10 +97,9 @@ $(function()
 		};
 
 		var FA = {
-			spc: $('<i class="spacer"></i>'),
-			check: $('<i class="fa fa-check"></i>'),
-			down: $('<i class="fa fa-thumbs-down"></i>'),
-			info: $('<i class="fa fa-info-circle"></i>')
+			check: $('<div class="icon"><i class="fa fa-check"></i></div>'),
+			down: $('<div class="icon"><i class="fa fa-thumbs-down"></i></div>'),
+			info: $('<div class="icon"><i class="fa fa-info-circle"></i</div>>')
 		};
 
 		var amiright = function()
@@ -125,12 +124,14 @@ $(function()
 			{
 				var msg = [
 					FA.check.clone(),
-					FA.spc.clone(),
 					$("<strong />").text(theface.Names[0]),
 					" is correct. "
 				];
 				if ( i > 0 )
+				{
+					msg.push( "<br />" );
 					msg.push( $("<small />").text("You answered ").append($("<strong />").text(name)) );
+				}
 
 				flash_message( msg, "correct" );
 				next_face();
@@ -139,17 +140,16 @@ $(function()
 			{
 				remaining.push( hash )
 
-				var ans = "This"
-				if ( name.trim().length > 0 )
-					ans = $("<small />").text(name)
-
 				var msg = [
 					FA.down.clone(),
-					FA.spc.clone(),
-					ans,
-					" was incorrect; I was looking for ",
-					$("<strong />").text(theface.Names[0])
+					$("<strong />").text(theface.Names[0]),
+					" would have been better."
 				];
+				if ( name.trim().length > 0 )
+				{
+					msg.push( "<br />You entered: " );
+					msg.push( $("<small />").text(name) );
+				}
 				flash_message( msg, "incorrect" );
 
 				setTimeout( next_face, 1000 );
