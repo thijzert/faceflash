@@ -25,7 +25,8 @@
 					</div>
 				</div>
 				<div id="controls">
-					<dl id="score-thusfar">
+					<dl id="score-thusfar" class="scoreboard">
+						<dt>Round:</dt><dd class="score-round">0</dd><br />
 						<dt>Remaining:</dt><dd class="score-remaining">0</dd><br />
 						<dt>Correct:</dt><dd class="score-correct">0</dd><br />
 						<dt>Incorrect:</dt><dd class="score-incorrect">0</dd>
@@ -39,6 +40,14 @@
 			</div>
 			<div id="score">
 				<h1>Success!</h1>
+				<h3>Your score:</h3>
+
+				<dl id="final-score" class="scoreboard">
+					<dt>Rounds:</dt><dd class="score-round">0</dd><br />
+					<dt>Correct:</dt><dd class="score-correct">0</dd><br />
+					<dt>Incorrect:</dt><dd class="score-incorrect">0</dd><br />
+					<dt>Total time:</dt><dd class="score-total-time">00:00</dd>
+				</dl>
 				<button type="button" class="again">Play it again, Sam</button>
 			</div>
 		</div>

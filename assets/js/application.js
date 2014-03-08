@@ -5,6 +5,11 @@ $(function()
 
 	$("#faceflash").toggleClass( "loading", true );
 
+	var update_score = function( key, val )
+	{
+		$( ".scoreboard .score-" + key ).text( val );
+	};
+
 	var enter_stage = function()
 	{
 		var stages = {
@@ -72,11 +77,16 @@ $(function()
 		var this_round = [];
 		var remaining = [];
 		var incorrect = 0;
+		var correct = 0;
+		var round_no = 0;
 
 		var next_round = function()
 		{
 			this_round = shuffle_array( remaining );
 			remaining = [];
+
+			round_no++;
+			update_score( "round", round_no );
 		};
 
 		var next_face = function()
@@ -93,6 +103,7 @@ $(function()
 					return;
 				}
 			}
+			update_score( "remaining", this_round.length + remaining.length );
 
 			hash = this_round[0];
 			$("#game #portrait img").attr( "src", "face/" + hash );
@@ -129,6 +140,9 @@ $(function()
 			this_round.splice(0,1);
 			if ( rv )
 			{
+				correct++;
+				update_score( "correct", correct );
+
 				var msg = [
 					FA.check.clone(),
 					$("<strong />").text(theface.Names[0]),
@@ -146,6 +160,8 @@ $(function()
 			else
 			{
 				remaining.push( hash )
+				incorrect++;
+				update_score( "incorrect", incorrect );
 
 				var msg = [
 					FA.down.clone(),
