@@ -121,7 +121,9 @@ func main() {
 	s := web.NewServer()
 
 	fm := make(FaceMap)
+	log.Printf("Faceflash starting; scanning directory %s...", ImageFolder)
 	fm.ParseDir( ImageFolder )
+	log.Printf("Done scanning.")
 
 	s.Get( "/assets/(.*)", read_asset );
 	s.Get( "/favicon.ico", func( ctx *web.Context ) { read_asset( ctx, "images/favicon.ico" ) } )
