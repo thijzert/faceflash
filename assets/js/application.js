@@ -81,6 +81,9 @@ $(function()
 
 		var next_face = function()
 		{
+			$("#portrait .hi-my-name-is").hide();
+			$("#portrait .hi-my-name-is .name").text("");
+
 			if ( this_round.length == 0 )
 			{
 				next_round();
@@ -108,16 +111,20 @@ $(function()
 			var theface = faces[hash];
 			var name = ipt.val().toLowerCase().trim();
 
+			var shortest = theface.Names[0];
+
 			var rv = false;
 			var i = 0;
 			for ( ; i < theface.Names.length; i++ )
 			{
 				if ( theface.Names[i].toLowerCase().trim() === name )
-				{
 					rv = true;
-					break;
-				}
+				if ( theface.Names[i].length < shortest.length )
+					shortest = theface.Names[i];
 			}
+
+			$("#portrait .hi-my-name-is .name").text(shortest);
+			$("#portrait .hi-my-name-is").show();
 
 			this_round.splice(0,1);
 			if ( rv )
@@ -152,7 +159,7 @@ $(function()
 				}
 				flash_message( msg, "incorrect" );
 
-				setTimeout( next_face, 1000 );
+				setTimeout( next_face, 2000 );
 				hash = null;
 			}
 		};

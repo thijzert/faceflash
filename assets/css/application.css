@@ -66,6 +66,36 @@ body
 	vertical-align: middle;
 }
 
+#game #portrait .hi-my-name-is
+{
+	background-color: #A81925;
+	position: absolute;
+	right: 35px;
+	bottom: 60px;
+	padding-bottom: 9px;
+	border-radius: 10px;
+	font-size: 30px;
+	line-height: 50px;
+	color: black;
+}
+#game #portrait .hi-my-name-is .hello
+{
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	font-family: Papyrus, "Comic Sans MS", sans-serif;
+	color: white;
+}
+#game #portrait .hi-my-name-is .name
+{
+	padding: 0 15px;
+	min-width: 130px;
+	text-align: center;
+	background-color: white;
+	font-family: Garamond, serif;
+}
+
+
 #game #controls
 {
 	margin-top: 40px;
