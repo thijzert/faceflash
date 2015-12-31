@@ -8,7 +8,7 @@ body
 #faceflash
 {
 	background-color: #fff;
-	width: 1200px;
+	width: 960px;
 	position: relative;
 	margin: 50px auto 20px auto;
 	min-height: 700px;
@@ -24,8 +24,8 @@ body
 {
 	position: absolute;
 	top: 20px;
-	left: 20px;
-	width: 1160px;
+	left: 40px;
+	width: 880px;
 	display: none;
 }
 
@@ -35,7 +35,7 @@ body
 {
 	font-size: 300px;
 	line-height: 300px;
-	width: 1160px;
+	width: 880px;
 	text-align: center;
 	position: absolute;
 	left: 0px;
@@ -50,8 +50,8 @@ body
 {
 	border: 1px solid #bbb;
 	position: absolute;
-	left: 100px;
-	top: 50px;
+	left: 0px;
+	top: 40px;
 	width: 380px;
 	height: 550px;
 	line-height: 550px;
@@ -66,11 +66,41 @@ body
 	vertical-align: middle;
 }
 
+#game #portrait .hi-my-name-is
+{
+	background-color: #A81925;
+	position: absolute;
+	right: 35px;
+	bottom: 60px;
+	padding-bottom: 9px;
+	border-radius: 10px;
+	font-size: 30px;
+	line-height: 50px;
+	color: black;
+}
+#game #portrait .hi-my-name-is .hello
+{
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	font-family: Papyrus, "Comic Sans MS", sans-serif;
+	color: white;
+}
+#game #portrait .hi-my-name-is .name
+{
+	padding: 0 15px;
+	min-width: 130px;
+	text-align: center;
+	background-color: white;
+	font-family: Garamond, serif;
+}
+
+
 #game #controls
 {
-	margin-top: 50px;
+	margin-top: 40px;
 	float: right;
-	width: 600px;
+	width: 480px;
 }
 #game #controls dl
 {
@@ -128,6 +158,13 @@ body
 #game #flash_container > p.info
 {
 	color: #8B4513;
+}
+
+#game #flash_container div.icon
+{
+	float: right;
+	padding-left: 15px;
+	font-size: 28px;
 }
 
 

@@ -81,6 +81,9 @@ $(function()
 
 		var next_face = function()
 		{
+			$("#portrait .hi-my-name-is").hide();
+			$("#portrait .hi-my-name-is .name").text("");
+
 			if ( this_round.length == 0 )
 			{
 				next_round();
@@ -97,34 +100,47 @@ $(function()
 		};
 
 		var FA = {
-			spc: $('<i class="spacer"></i>'),
-			check: $('<i class="fa fa-check"></i>'),
-			down: $('<i class="fa fa-thumbs-down"></i>'),
-			info: $('<i class="fa fa-info-circle"></i>')
+			check: $('<div class="icon"><i class="fa fa-check"></i></div>'),
+			down: $('<div class="icon"><i class="fa fa-thumbs-down"></i></div>'),
+			info: $('<div class="icon"><i class="fa fa-info-circle"></i</div>>')
 		};
 
 		var amiright = function()
 		{
 			if ( !hash )  return;
 			var theface = faces[hash];
-			var name = ipt.val().toLowerCase();
+			var name = ipt.val().toLowerCase().trim();
+
+			var shortest = theface.Names[0];
 
 			var rv = false;
-			for ( var i = 0; i < theface.Names.length; i++ )
-				if ( theface.Names[i].toLowerCase() === name )
+			var i = 0;
+			for ( ; i < theface.Names.length; i++ )
+			{
+				if ( theface.Names[i].toLowerCase().trim() === name )
 					rv = true;
+				if ( theface.Names[i].length < shortest.length )
+					shortest = theface.Names[i];
+			}
+
+			$("#portrait .hi-my-name-is .name").text(shortest);
+			$("#portrait .hi-my-name-is").show();
 
 			this_round.splice(0,1);
 			if ( rv )
 			{
 				var msg = [
 					FA.check.clone(),
-					FA.spc.clone(),
-					$("<strong />").text(name),
-					" is correct."
+					$("<strong />").text(theface.Names[0]),
+					" is correct. "
 				];
-				flash_message( msg, "correct" );
+				if ( i > 0 )
+				{
+					msg.push( "<br />" );
+					msg.push( $("<small />").text("You answered ").append($("<strong />").text(name)) );
+				}
 
+				flash_message( msg, "correct" );
 				next_face();
 			}
 			else
@@ -133,14 +149,17 @@ $(function()
 
 				var msg = [
 					FA.down.clone(),
-					FA.spc.clone(),
-					$("<small />").text(name),
-					" was incorrect; I was looking for ",
-					$("<strong />").text(theface.Names[0])
+					$("<strong />").text(theface.Names[0]),
+					" would have been better."
 				];
+				if ( name.trim().length > 0 )
+				{
+					msg.push( "<br />You entered: " );
+					msg.push( $("<small />").text(name) );
+				}
 				flash_message( msg, "incorrect" );
 
-				setTimeout( next_face, 1000 );
+				setTimeout( next_face, 2000 );
 				hash = null;
 			}
 		};

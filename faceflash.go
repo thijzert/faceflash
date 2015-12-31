@@ -5,6 +5,8 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
+	"flag"
+	"log"
 	"io/ioutil"
 	"mime"
 	"path/filepath"
@@ -14,7 +16,7 @@ import (
 )
 
 
-type FaceMap map[string]Face
+type FaceMap map[string]*Face
 
 type Face struct {
 	filename string
@@ -23,11 +25,15 @@ type Face struct {
 
 
 func ( fm FaceMap ) ParseDir( dir string ) {
-	files, err := ioutil.ReadDir( dir )
-	if err != nil { return }
+	// fmt.Printf( "Descending into \"%s\"\n", dir )
 
+	files, err := ioutil.ReadDir( dir )
+	if err != nil { log.Fatal(err) }
+
+	// Add any files first
 	for _, file := range files {
 		if file.IsDir() { continue }
+		if file.Size() == 0 { continue }
 
 		path := dir + "/" + file.Name()
 		name := file.Name()
@@ -39,14 +45,20 @@ func ( fm FaceMap ) ParseDir( dir string ) {
 		if ok {
 			ff.AppendName( name )
 		} else {
-			fm[sha] = Face{ path, []string{ name } }
+			fm[sha] = &Face{ path, []string{ name } }
 		}
+	}
+
+	// Now recursively descend into directories
+	for _, file := range files {
+		if ! file.IsDir() { continue }
+		fm.ParseDir( dir + "/" + file.Name() )
 	}
 }
 func ( ff Face ) SetFile( file string ) {
 	ff.filename = file
 }
-func ( ff Face ) AppendName( name string ) {
+func ( ff *Face ) AppendName( name string ) {
 	n := len(ff.Names)
 	if n == cap(ff.Names) {
 		// Slice is full; must grow.
@@ -94,10 +106,18 @@ func read_asset( ctx *web.Context, filename string )  {
 }
 
 
-
-var ImageFolder = "/path/to/images"
+var ImageFolder string
+var BindIP string
+var BindPort int
 
 func main() {
+
+	flag.StringVar( &ImageFolder, "folder", "/path/to/images", "where the images are located" )
+	flag.StringVar( &BindIP, "ip", "0.0.0.0", "the IP address to bind on" )
+	flag.IntVar( &BindPort, "port", 9999, "the port to listen on" )
+	flag.Parse()
+
+
 	s := web.NewServer()
 
 	fm := make(FaceMap)
@@ -107,7 +127,7 @@ func main() {
 	s.Get( "/favicon.ico", func( ctx *web.Context ) { read_asset( ctx, "images/favicon.ico" ) } )
 
 	s.Get( "/faces.json", func( ctx *web.Context ) {
-		ctx.SetHeader( "Content-type", "application/json", true );
+		ctx.SetHeader( "Content-type", "application/json; charset=UTF-8", true );
 		js, _ := json.Marshal( fm )
 		ctx.Write( js )
 	} )
@@ -122,6 +142,6 @@ func main() {
 
 	s.Get( "/", func( ctx *web.Context ) { read_asset( ctx, "application.html" ) } )
 
-	s.Run( "0.0.0.0:9999" );
+	s.Run( fmt.Sprintf( "%s:%d", BindIP, BindPort ) )
 }
 
