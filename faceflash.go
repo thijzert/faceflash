@@ -66,16 +66,7 @@ func (ff Face) SetFile(file string) {
 	ff.filename = file
 }
 func (ff *Face) AppendName(name string) {
-	n := len(ff.Names)
-	if n == cap(ff.Names) {
-		// Slice is full; must grow.
-		// We double its size and add 1, so if the size is zero we still grow.
-		newSlice := make([]string, len(ff.Names), 2*len(ff.Names)+1)
-		copy(newSlice, ff.Names)
-		ff.Names = newSlice
-	}
-	ff.Names = ff.Names[0 : n+1]
-	ff.Names[n] = name
+	ff.Names = append(ff.Names, name)
 }
 
 func (ff Face) ReadFile(ctx *web.Context) {
