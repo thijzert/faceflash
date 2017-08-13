@@ -112,12 +112,16 @@ var BindPort int
 
 func main() {
 
-	flag.StringVar(&ImageFolder, "folder", "/path/to/images", "where the images are located")
+	flag.StringVar(&ImageFolder, "folder", "", "where the images are located")
 	flag.StringVar(&BindIP, "ip", "0.0.0.0", "the IP address to bind on")
 	flag.IntVar(&BindPort, "port", 9999, "the port to listen on")
 	flag.Parse()
 
 	s := web.NewServer()
+
+	if ImageFolder == "" && flag.NArg() > 0 {
+		ImageFolder = flag.Args()[0]
+	}
 
 	fm := make(FaceMap)
 	log.Printf("Faceflash starting; scanning directory %s...", ImageFolder)
