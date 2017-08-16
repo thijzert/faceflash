@@ -83,27 +83,36 @@ func sha1sum(filename string) string {
 	return fmt.Sprintf("%x", s.Sum(nil))
 }
 
-func read_file(ctx *web.Context, filename string) {
+func read_bytes(ctx *web.Context, filename string, contents []byte) {
+	var mt string = mime.TypeByExtension(filepath.Ext(filename))
+	if mt == "" {
+		mt = "text/plain; charset=UTF-8"
+	}
+	ctx.SetHeader("Content-type", mt, true)
+	ctx.SetHeader("Content-length", fmt.Sprintf("%d", len(contents)), true)
+	ctx.Write(contents)
+}
 
+func read_file(ctx *web.Context, filename string) {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		ctx.NotFound("Not found")
 	} else {
-		var mt string = mime.TypeByExtension(filepath.Ext(filename))
-		if mt == "" {
-			mt = "text/plain; charset=UTF-8"
-		}
-		ctx.SetHeader("Content-type", mt, true)
-		ctx.SetHeader("Content-length", fmt.Sprintf("%d", len(bytes)), true)
-		ctx.Write(bytes)
+		read_bytes(ctx, filename, bytes)
 	}
 }
 
 var dots = regexp.MustCompile("\\.+")
 
 func read_asset(ctx *web.Context, filename string) {
-	read_file(ctx, "./assets/"+dots.ReplaceAllString(filename, "."))
+	bytes, err := Asset("assets/" + filename)
+
+	if err != nil {
+		ctx.NotFound("Not found")
+	} else {
+		read_bytes(ctx, filename, bytes)
+	}
 }
 
 var ImageFolder string
