@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha1"
 	"encoding/json"
 	"flag"
@@ -8,8 +9,10 @@ import (
 	"io/ioutil"
 	"log"
 	"mime"
+	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/hoisie/web"
 )
@@ -130,6 +133,11 @@ func main() {
 
 	if ImageFolder == "" && flag.NArg() > 0 {
 		ImageFolder = flag.Args()[0]
+	}
+	if ImageFolder == "" {
+		fmt.Printf("No input folder specified.\nDrag a folder to this terminal window and press <enter>: ")
+		ImageFolder, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+		ImageFolder = strings.TrimSpace(ImageFolder)
 	}
 
 	fm := make(FaceMap)
