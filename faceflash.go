@@ -168,6 +168,6 @@ func main() {
 	if ip == "0.0.0.0" {
 		ip = "localhost"
 	}
-	log.Printf("Starting web server. Point your browser towards http://%s:%s", ip, BindPort)
+	log.Printf("Starting web server. Point your browser towards http://%s:%d", ip, BindPort)
 	s.Run(fmt.Sprintf("%s:%d", BindIP, BindPort))
 }
