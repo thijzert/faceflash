@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha1"
 	"encoding/json"
 	"flag"
@@ -8,8 +9,10 @@ import (
 	"io/ioutil"
 	"log"
 	"mime"
+	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/hoisie/web"
 )
@@ -83,27 +86,36 @@ func sha1sum(filename string) string {
 	return fmt.Sprintf("%x", s.Sum(nil))
 }
 
-func read_file(ctx *web.Context, filename string) {
+func read_bytes(ctx *web.Context, filename string, contents []byte) {
+	var mt string = mime.TypeByExtension(filepath.Ext(filename))
+	if mt == "" {
+		mt = "text/plain; charset=UTF-8"
+	}
+	ctx.SetHeader("Content-type", mt, true)
+	ctx.SetHeader("Content-length", fmt.Sprintf("%d", len(contents)), true)
+	ctx.Write(contents)
+}
 
+func read_file(ctx *web.Context, filename string) {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		ctx.NotFound("Not found")
 	} else {
-		var mt string = mime.TypeByExtension(filepath.Ext(filename))
-		if mt == "" {
-			mt = "text/plain; charset=UTF-8"
-		}
-		ctx.SetHeader("Content-type", mt, true)
-		ctx.SetHeader("Content-length", fmt.Sprintf("%d", len(bytes)), true)
-		ctx.Write(bytes)
+		read_bytes(ctx, filename, bytes)
 	}
 }
 
 var dots = regexp.MustCompile("\\.+")
 
 func read_asset(ctx *web.Context, filename string) {
-	read_file(ctx, "./assets/"+dots.ReplaceAllString(filename, "."))
+	bytes, err := Asset("assets/" + filename)
+
+	if err != nil {
+		ctx.NotFound("Not found")
+	} else {
+		read_bytes(ctx, filename, bytes)
+	}
 }
 
 var ImageFolder string
@@ -112,12 +124,21 @@ var BindPort int
 
 func main() {
 
-	flag.StringVar(&ImageFolder, "folder", "/path/to/images", "where the images are located")
+	flag.StringVar(&ImageFolder, "folder", "", "where the images are located")
 	flag.StringVar(&BindIP, "ip", "0.0.0.0", "the IP address to bind on")
 	flag.IntVar(&BindPort, "port", 9999, "the port to listen on")
 	flag.Parse()
 
 	s := web.NewServer()
+
+	if ImageFolder == "" && flag.NArg() > 0 {
+		ImageFolder = flag.Args()[0]
+	}
+	if ImageFolder == "" {
+		fmt.Printf("No input folder specified.\nDrag a folder to this terminal window and press <enter>: ")
+		ImageFolder, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+		ImageFolder = strings.TrimSpace(ImageFolder)
+	}
 
 	fm := make(FaceMap)
 	log.Printf("Faceflash starting; scanning directory %s...", ImageFolder)
@@ -143,5 +164,10 @@ func main() {
 
 	s.Get("/", func(ctx *web.Context) { read_asset(ctx, "application.html") })
 
+	ip := BindIP
+	if ip == "0.0.0.0" {
+		ip == "localhost"
+	}
+	log.Printf("Starting web server. Point your browser towards http://%s:%s", ip, BindPort)
 	s.Run(fmt.Sprintf("%s:%d", BindIP, BindPort))
 }
