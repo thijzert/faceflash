@@ -164,5 +164,10 @@ func main() {
 
 	s.Get("/", func(ctx *web.Context) { read_asset(ctx, "application.html") })
 
+	ip := BindIP
+	if ip == "0.0.0.0" {
+		ip == "localhost"
+	}
+	log.Printf("Starting web server. Point your browser towards http://%s:%s", ip, BindPort)
 	s.Run(fmt.Sprintf("%s:%d", BindIP, BindPort))
 }
