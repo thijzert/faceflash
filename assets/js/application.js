@@ -224,9 +224,17 @@ $(function()
 
 			// For debugging purposes: 
 			if ( location.hash === "#skip-to-the-game" )
+			{
 				start_game( "right now" );
+			}
 			else
+			{
 				enter_stage( "welcome" );
+				window.setTimeout(function()
+				{
+					$("#welcome button").focus();
+				}, 200 );
+			}
 		}
 	});
 
