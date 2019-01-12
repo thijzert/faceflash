@@ -109,7 +109,7 @@ func read_file(ctx *web.Context, filename string) {
 var dots = regexp.MustCompile("\\.+")
 
 func read_asset(ctx *web.Context, filename string) {
-	bytes, err := Asset("assets/" + filename)
+	bytes, err := getAsset("assets/" + filename)
 
 	if err != nil {
 		ctx.NotFound("Not found")
