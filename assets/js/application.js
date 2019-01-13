@@ -1,5 +1,5 @@
 
-$(function()
+(function()
 {
 	var faces = null;
 
@@ -239,5 +239,5 @@ $(function()
 	});
 
 	$("#welcome button, #score button.again").click( start_game );
-});
+})();
 
