@@ -1,6 +1,112 @@
 
 (function()
 {
+	var requestAnimation = (function() {
+		var t0 = null;
+		var animations = [];
+
+		var cont = function(t)
+		{
+			for ( let i = 0; i < animations.length; i++ )
+			{
+				let anim = animations[i];
+				if ( anim.start === null )  anim.start = t;
+				let p = (t - anim.start) / anim.duration;
+				if ( p < 0 ) p = 0;
+				if ( p > 1 ) p = 1;
+				anim.exec( p );
+			}
+			t0 = t;
+
+			for ( let i = animations.length - 1; i >= 0; i-- )
+			{
+				let anim = animations[i];
+				if ( t > (anim.start + anim.duration) )
+				{
+					if ( typeof(anim.onComplete) == "function" )
+					{
+						anim.onComplete();
+					}
+					animations.splice( i, 1 );
+				}
+			}
+
+			requestAnimationFrame( cont );
+		};
+		requestAnimationFrame( cont );
+
+		return (function( execFunction, duration, onComplete )
+		{
+			if ( typeof(execFunction) != "function" )
+			{
+				return;
+			}
+
+			duration = parseFloat(duration);
+			if ( duration < 1 )
+			{
+				duration = 500;
+			}
+
+			animations.push({
+				start: t0,
+				duration: duration,
+				exec: execFunction,
+				onComplete: onComplete
+			});
+
+			execFunction(0);
+		});
+	})();
+	var cssAnimate = (function()
+	{
+		// Sinusoidal easing
+		var ease = function( from, to, scale )
+		{
+			if ( scale <= 0 )  return from;
+			if ( scale >= 1 )  return to;
+
+			return from + (Math.cos((1+scale)*Math.PI)) * (to - from);
+		};
+
+		var unitR = /^(.*)(cm|mm|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|%)$/;
+
+		return function( node, css, duration, callback )
+		{
+			var comp = window.getComputedStyle( node );
+			var before = {};
+			var after = {};
+			var units = {};
+			for ( k in css )
+			{
+				if ( !css.hasOwnProperty(k) )  continue;
+
+				before[k] = parseFloat(comp[k]);
+
+				let mm = unitR.exec(css[k]);
+				if ( mm )
+				{
+					after[k] = parseFloat(mm[1]);
+					units[k] = mm[2];
+				}
+				else
+				{
+					after[k] = parseFloat(css[k]);
+					units[k] = "";
+				}
+			}
+			var twn = function( t )
+			{
+				for ( k in css )
+				{
+					if ( !css.hasOwnProperty(k) )  continue;
+					node.style[k] = ease( before[k], after[k], t ) + units[k];
+				}
+			};
+			requestAnimation( twn, duration, callback );
+		};
+	})();
+
 	var faces = null;
 
 	$("#faceflash").toggleClass( "loading", true );
@@ -48,19 +154,21 @@
 		var Countdown = {
 			timeout: 1000,
 			overlap:  800,
-			container: $("#game > div#countdown"),
+			container: document.querySelector("#game > div#countdown"),
 			blip: function( num, callback )
 			{
 				return function()
 				{
-					var N = $("<span></span>").html( num );
-					Countdown.container.prepend( N );
-					N.animate( { "font-size": "200px", opacity: 0.0 },
-						Countdown.timeout + Countdown.overlap,
-						function()
-						{
-							N.remove();
-						} );
+					var N = document.createElement("SPAN");
+					N.innerHTML = num;
+					Countdown.container.insertBefore( N, Countdown.container.firstChild );
+					let d = Countdown.timeout + Countdown.overlap;
+					let s = { fontSize: "200px", opacity: 0.0 };
+					let cb = function() {
+						Countdown.container.removeChild(N);
+					};
+					cssAnimate( N, s, d, cb );
+
 					window.setTimeout( num == 1 ? callback : Countdown.blip( num - 1, callback ), Countdown.timeout )
 				}
 			}
@@ -226,6 +334,10 @@
 			if ( location.hash === "#skip-to-the-game" )
 			{
 				start_game( "right now" );
+			}
+			else if ( location.hash === "#start-in-5" )
+			{
+				start_game();
 			}
 			else
 			{
