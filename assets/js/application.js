@@ -293,12 +293,12 @@
 
 			if ( this_round.length == 0 )
 			{
-				next_round();
-				if ( this_round.length == 0 )
+				if ( remaining.length == 0 )
 				{
 					enter_stage( "score" );
 					return;
 				}
+				next_round();
 			}
 			update_score( "remaining", this_round.length + remaining.length );
 
