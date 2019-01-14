@@ -1,0 +1,12 @@
+# github.com/hoisie/web v0.1.1-0.20160809141353-a498c022b2c0
+github.com/hoisie/web
+# golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc
+golang.org/x/crypto/pbkdf2
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/net v0.0.0-20190110200230-915654e7eabc
+golang.org/x/net/websocket
+# golang.org/x/sys v0.0.0-20190109145017-48ac38b7c8cb
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# github.com/thijzert/go-resemble v1.0.1-20190112195619-1c10009e8d2e
+github.com/thijzert/go-resemble

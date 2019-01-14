@@ -109,7 +109,7 @@ func read_file(ctx *web.Context, filename string) {
 var dots = regexp.MustCompile("\\.+")
 
 func read_asset(ctx *web.Context, filename string) {
-	bytes, err := Asset("assets/" + filename)
+	bytes, err := getAsset("assets/" + filename)
 
 	if err != nil {
 		ctx.NotFound("Not found")
@@ -166,8 +166,8 @@ func main() {
 
 	ip := BindIP
 	if ip == "0.0.0.0" {
-		ip == "localhost"
+		ip = "localhost"
 	}
-	log.Printf("Starting web server. Point your browser towards http://%s:%s", ip, BindPort)
+	log.Printf("Starting web server. Point your browser towards http://%s:%d", ip, BindPort)
 	s.Run(fmt.Sprintf("%s:%d", BindIP, BindPort))
 }
