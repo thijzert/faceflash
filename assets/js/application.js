@@ -106,6 +106,30 @@
 			requestAnimation( twn, duration, callback );
 		};
 	})();
+	var fadeOut = function( node, duration, callback )
+	{
+		node.style.display = "block"; // FIXME: detect inline elements.
+		cssAnimate( node, { opacity: 0.0 }, duration, function()
+		{
+			node.style.display = "none";
+			if ( typeof(callback) == "function" )
+			{
+				callback();
+			}
+		} );
+	};
+	var fadeIn = function( node, duration, callback )
+	{
+		node.style.opacity = 0.0;
+		node.style.display = "block"; // FIXME: detect inline elements.
+		cssAnimate( node, { opacity: 1.0 }, duration, function()
+		{
+			if ( typeof(callback) == "function" )
+			{
+				callback();
+			}
+		} );
+	};
 
 	var faces = null;
 
@@ -119,34 +143,74 @@
 	var enter_stage = function()
 	{
 		var stages = {
-			welcome: $("#faceflash > div#welcome"),
-			countdown: $("#faceflash > div#countdown"),
-			game: $("#faceflash > div#game"),
-			score: $("#faceflash > div#score")
+			welcome:   document.querySelector("#faceflash > div#welcome"),
+			countdown: document.querySelector("#faceflash > div#countdown"),
+			game:      document.querySelector("#faceflash > div#game"),
+			score:     document.querySelector("#faceflash > div#score")
 		}
 
 		return function( stage )
 		{
 			if ( !stages[stage] )  return;
 
-			$("#faceflash > div:visible").fadeOut( 300 );
-			stages[stage].fadeIn( 400 );
+			for ( k in stages )
+			{
+				if ( !stages.hasOwnProperty(k) )  continue;
+				if ( k == stage )  continue;
+				if ( !stages[k] )  continue;
+				if ( stages[k].style.display != "none" )
+				{
+					fadeOut( stages[k], 300 );
+				}
+			}
+			fadeIn( stages[stage], 400 );
 		}
 	}();
 
 	var start_game = function()
 	{
-		var flash_container = $("#game #flash_container");
+		var flash_container = document.querySelector("#game #flash_container");
 		var flash_message = function( message, cls )
 		{
-			var P = $("<p></p>").append(message).addClass(cls);
-			flash_container.prepend(P);
+			var P = document.createElement("P");
+			P.classList.add( cls );
+			if ( typeof(message) == "string" )
+			{
+				P.innerHTML = message;
+			}
+			else if ( message.length )
+			{
+				for ( let i = 0; i < message.length; i++ )
+				{
+					if ( typeof(message[i]) == "string" )
+					{
+						P.appendChild(document.createTextNode(message[i]));
+					}
+					else if ( message[i].nodeName )
+					{
+						P.appendChild(message[i]);
+					}
+					else if ( message[i].hasOwnProperty("length") && message[i].domManip )
+					{
+						for ( let j = 0; j < message[i].length; j++ )
+						{
+							P.appendChild(message[i][j]);
+						}
+					}
+					else
+					{
+						P.appendChild(document.createTextNode(JSON.stringify(message[i])));
+					}
+				}
+			}
+
+			flash_container.insertBefore( P, flash_container.firstChild );
 
 			setTimeout( function()
 			{
-				P.fadeOut( 4000, function()
+				fadeOut( P, 4000, function()
 				{
-					P.remove();
+					flash_container.removeChild(P);
 				});
 			}, 4000 );
 		};
