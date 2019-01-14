@@ -422,12 +422,10 @@
 		}
 	}();
 
-	$.ajax({
-		url: "faces.json",
-		dataType: "json",
-		success: function( data )
+	fetch("faces.json")
+		.then(async function( response )
 		{
-			faces = data;
+			faces = await response.json();
 			document.querySelector("#faceflash").classList.toggle( "loading", false );
 
 			// For debugging purposes: 
@@ -447,8 +445,7 @@
 					document.querySelector("#welcome button").focus();
 				}, 200 );
 			}
-		}
-	});
+		});
 
 	document.querySelector("#score button.again").addEventListener( "click", start_game );
 	document.querySelector("#welcome button").addEventListener( "click", start_game );
