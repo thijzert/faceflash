@@ -124,6 +124,7 @@
 		node.style.display = "block"; // FIXME: detect inline elements.
 		cssAnimate( node, { opacity: 1.0 }, duration, function()
 		{
+			node.style.display = "block"; // See above
 			if ( typeof(callback) == "function" )
 			{
 				callback();
