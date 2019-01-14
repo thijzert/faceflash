@@ -131,6 +131,28 @@
 		} );
 	};
 
+	var tag = function( tagname, text )
+	{
+		let rv = document.createElement(tagname);
+		rv.appendChild( document.createTextNode(text) );
+		return rv;
+	};
+	var ap = function( target )
+	{
+		for ( let i = 1; i < arguments.length; i++ )
+		{
+			if ( typeof(arguments[i]) == "string" )
+			{
+				target.appendChild( document.createTextNode(arguments[i]) );
+			}
+			else
+			{
+				target.appendChild( arguments[i] );
+			}
+		}
+		return target;
+	};
+
 	var faces = null;
 
 	document.getElementById("faceflash").classList.toggle( "loading", true );
@@ -330,13 +352,13 @@
 
 				var msg = [
 					FA.check(),
-					$("<strong />").text(theface.Names[0]),
+					tag( "STRONG", theface.Names[0] ),
 					" is correct. "
 				];
 				if ( i > 0 )
 				{
 					msg.push( document.createElement("BR") );
-					msg.push( $("<small />").text("You answered ").append($("<strong />").text(name)) );
+					msg.push( ap( tag( "SMALL", "You answered " ), tag( "STRONG", name ) ) );
 				}
 
 				flash_message( msg, "correct" );
@@ -350,14 +372,14 @@
 
 				var msg = [
 					FA.down(),
-					$("<strong />").text(theface.Names[0]),
+					tag( "STRONG", theface.Names[0] ),
 					" would have been better."
 				];
 				if ( name.trim().length > 0 )
 				{
 					msg.push( document.createElement("BR") );
 					msg.push( "You entered: " );
-					msg.push( $("<small />").text(name) );
+					msg.push( tag( "SMALL", name ) );
 				}
 				flash_message( msg, "incorrect" );
 
