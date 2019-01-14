@@ -154,6 +154,23 @@
 		return target;
 	};
 
+	var duration = function( t0, t1 )
+	{
+		let d = Math.round( (t1 - t0)/1000 );
+		let s = d % 60;
+		let m = Math.floor( d / 60 ) % 60;
+		let h = Math.floor( d / 3600 );
+
+		let f = (x) => ( x < 10 ? "0" + x : x );
+
+		if ( h )
+		{
+			return f(h) + ":" + f(m) + ":" + f(s);
+		}
+
+		return f(m) + ":" + f(s);
+	};
+
 	var faces = null;
 
 	document.getElementById("faceflash").classList.toggle( "loading", true );
@@ -271,6 +288,7 @@
 
 		var ipt = document.querySelector("#game #form input");
 		var hash = null;
+		var tStart = null;
 		var this_round = [];
 		var remaining = [];
 		var incorrect = 0;
@@ -295,6 +313,7 @@
 			{
 				if ( remaining.length == 0 )
 				{
+					update_score( "total-time", duration( tStart, new Date() ) );
 					enter_stage( "score" );
 					return;
 				}
@@ -402,6 +421,7 @@
 		{
 			console.log( "The game is afoot, dear Watson." );
 
+			tStart = new Date();
 			incorrect = 0;
 			remaining = [];
 			hash = null;
