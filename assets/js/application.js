@@ -133,11 +133,13 @@
 
 	var faces = null;
 
-	$("#faceflash").toggleClass( "loading", true );
+	document.getElementById("faceflash").classList.toggle( "loading", true );
 
 	var update_score = function( key, val )
 	{
-		$( ".scoreboard .score-" + key ).text( val );
+		let sc = document.querySelectorAll( ".scoreboard .score-" + key )
+		for ( s of sc )
+			s.innerText = val;
 	};
 
 	var enter_stage = function()
@@ -244,7 +246,7 @@
 			return o;
 		};
 
-		var ipt = $("#game #form input");
+		var ipt = document.querySelector("#game #form input");
 		var hash = null;
 		var this_round = [];
 		var remaining = [];
@@ -263,8 +265,8 @@
 
 		var next_face = function()
 		{
-			$("#portrait .hi-my-name-is").hide();
-			$("#portrait .hi-my-name-is .name").text("");
+			document.querySelector("#portrait .hi-my-name-is").style.display = "none";
+			document.querySelector("#portrait .hi-my-name-is .name").innerText = "";
 
 			if ( this_round.length == 0 )
 			{
@@ -278,21 +280,32 @@
 			update_score( "remaining", this_round.length + remaining.length );
 
 			hash = this_round[0];
-			$("#game #portrait img").attr( "src", "face/" + hash );
-			ipt.val('').focus();
+			document.querySelector("#game #portrait img").src = "face/" + hash;
+			ipt.value = '';
+			ipt.focus();
 		};
 
 		var FA = {
-			check: $('<div class="icon"><i class="fa fa-check"></i></div>'),
-			down: $('<div class="icon"><i class="fa fa-thumbs-down"></i></div>'),
-			info: $('<div class="icon"><i class="fa fa-info-circle"></i</div>>')
+			_construct: function(icon)
+			{
+				return function()
+				{
+					let rv = document.createElement("DIV");
+					rv.classList.toggle("icon",true);
+					rv.innerHTML = "<i class=\"fa " + icon + "\"></i>";
+					return rv;
+				};
+			}
 		};
+		FA.check = FA._construct('fa-check');
+		FA.down = FA._construct('fa-thumbs-down');
+		FA.info = FA._construct('fa-info-circle');
 
 		var amiright = function()
 		{
 			if ( !hash )  return;
 			var theface = faces[hash];
-			var name = ipt.val().toLowerCase().trim();
+			var name = ipt.value.toLowerCase().trim();
 
 			var shortest = theface.Names[0];
 
@@ -306,8 +319,8 @@
 					shortest = theface.Names[i];
 			}
 
-			$("#portrait .hi-my-name-is .name").text(shortest);
-			$("#portrait .hi-my-name-is").show();
+			document.querySelector("#portrait .hi-my-name-is .name").innerText = shortest;
+			document.querySelector("#portrait .hi-my-name-is").style.display = "block";
 
 			this_round.splice(0,1);
 			if ( rv )
@@ -316,13 +329,13 @@
 				update_score( "correct", correct );
 
 				var msg = [
-					FA.check.clone(),
+					FA.check(),
 					$("<strong />").text(theface.Names[0]),
 					" is correct. "
 				];
 				if ( i > 0 )
 				{
-					msg.push( "<br />" );
+					msg.push( document.createElement("BR") );
 					msg.push( $("<small />").text("You answered ").append($("<strong />").text(name)) );
 				}
 
@@ -336,13 +349,14 @@
 				update_score( "incorrect", incorrect );
 
 				var msg = [
-					FA.down.clone(),
+					FA.down(),
 					$("<strong />").text(theface.Names[0]),
 					" would have been better."
 				];
 				if ( name.trim().length > 0 )
 				{
-					msg.push( "<br />You entered: " );
+					msg.push( document.createElement("BR") );
+					msg.push( "You entered: " );
 					msg.push( $("<small />").text(name) );
 				}
 				flash_message( msg, "incorrect" );
@@ -352,7 +366,7 @@
 			}
 		};
 
-		ipt.keypress(function( e )
+		ipt.addEventListener( "keyup", function( e )
 		{
 			if ( e.which != 13 )  return true;
 			amiright();
@@ -392,7 +406,7 @@
 		success: function( data )
 		{
 			faces = data;
-			$("#faceflash").toggleClass( "loading", false );
+			document.querySelector("#faceflash").classList.toggle( "loading", false );
 
 			// For debugging purposes: 
 			if ( location.hash === "#skip-to-the-game" )
@@ -408,12 +422,13 @@
 				enter_stage( "welcome" );
 				window.setTimeout(function()
 				{
-					$("#welcome button").focus();
+					document.querySelector("#welcome button").focus();
 				}, 200 );
 			}
 		}
 	});
 
-	$("#welcome button, #score button.again").click( start_game );
+	document.querySelector("#score button.again").addEventListener( "click", start_game );
+	document.querySelector("#welcome button").addEventListener( "click", start_game );
 })();
 
